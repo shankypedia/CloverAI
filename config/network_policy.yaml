@@ -1,0 +1,58 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cloverai-network-policy
+  namespace: cloverai
+  labels:
+    app: cloverai
+    component: security
+    environment: production
+annotations:
+    description: "Network policy for CloverAI components"
+    security.cloverai.io/last-reviewed: "2024-12-01"
+spec:
+  podSelector:
+    matchLabels:
+      app: cloverai
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: cloverai
+          role: frontend
+    - namespaceSelector:
+        matchLabels:
+          name: cloverai
+    ports:
+    - protocol: TCP
+      port: 3306
+      endPort: 3307
+    - protocol: TCP
+      port: 5432  # PostgreSQL
+    - protocol: TCP
+      port: 6379  # Redis
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: cloverai
+          role: backend
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 9090  # Prometheus
+    - protocol: TCP
+      port: 9093  # AlertManager
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/24
+        except:
+        - 10.0.0.1/32
