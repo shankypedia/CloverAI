@@ -6,7 +6,7 @@ import logging
 
 def delete_pycache_directories(directory, recursive, dry_run):
     found_pycache = False
-    for root, dirs, files in os.walk(directory):
+    for root, dirs in os.walk(directory):
         for dir_name in dirs:
             if dir_name == '__pycache__':
                 found_pycache = True
