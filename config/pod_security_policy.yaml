@@ -1,0 +1,62 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: cloverai-restricted-psp
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'runtime/default'
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: 'runtime/default'
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: 'runtime/default'
+    apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'
+spec:
+  privileged: false  # Prevent privileged pods
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+    ranges:
+      - min: 1000
+        max: 65535
+  runAsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 65535
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 65535
+  seLinux:
+    rule: 'RunAsAny'
+  readOnlyRootFilesystem: true
+  defaultAllowPrivilegeEscalation: false
+  allowedCapabilities: []
+  defaultAddCapabilities: []
+  allowedHostPaths: []  # Restrict host path mounts
+  allowedFlexVolumes: []
+  allowedCSIDrivers: []
+  allowedUnsafeSysctls: []
+  forbiddenSysctls:
+    - '*'
+  allowedProcMountTypes: ['Default']
+  runtimeClass:
+    allowedRuntimeClassNames:
+      - 'runc'
+    defaultRuntimeClassName: 'runc'
+    
