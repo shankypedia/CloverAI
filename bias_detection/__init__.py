@@ -1,17 +1,17 @@
 from .bias_detection import (
+    load_data,
     detect_bias,
     mitigate_bias,
-    DomainSpecificBiasDetector,
-    DomainAwareBiasDetector,
     HealthcareMetrics,
-    FinanceMetrics
+    FinanceMetrics,
+    DomainSpecificBiasDetector
 )
 
 __all__ = [
+    'load_data',
     'detect_bias',
     'mitigate_bias',
-    'DomainSpecificBiasDetector',
-    'DomainAwareBiasDetector',
     'HealthcareMetrics',
-    'FinanceMetrics'
+    'FinanceMetrics',
+    'DomainSpecificBiasDetector'
 ]
