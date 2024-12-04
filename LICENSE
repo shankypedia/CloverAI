@@ -1,0 +1,49 @@
+# MIT License
+
+Copyright (c) 2024 CloverAI
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Additional Terms for AI Governance Components
+
+While CloverAI is provided under the MIT License, users implementing this framework should be aware of the following considerations:
+
+1. Ethical Use: Users must employ this framework in accordance with established AI ethics principles and guidelines. The framework should not be used to circumvent or diminish fairness, transparency, or accountability in AI systems.
+
+2. Compliance Responsibility: Users are responsible for ensuring their implementation of CloverAI complies with all applicable laws, regulations, and standards governing AI systems in their jurisdiction, including but not limited to GDPR, CCPA, and industry-specific regulations.
+
+3. Data Privacy: Users must handle all data processed through CloverAI in accordance with relevant data protection and privacy laws. The framework's privacy protection features should be properly configured and validated for compliance with applicable regulations.
+
+4. Bias Mitigation: While CloverAI provides tools for detecting and mitigating bias, users are responsible for thoroughly testing and validating these mechanisms in their specific use cases. The framework's bias detection should be used as part of a comprehensive approach to ensuring AI fairness.
+
+5. Documentation and Transparency: Users should maintain appropriate documentation of their use of CloverAI, including configurations, modifications, and governance decisions, to ensure transparency and auditability of their AI systems.
+
+## Third-Party Components
+
+CloverAI incorporates several third-party components, each with its own licensing terms:
+
+- AIF360 (Apache License 2.0)
+- Prometheus Client (Apache License 2.0)
+- Rich (MIT License)
+- Kubernetes Client (Apache License 2.0)
+
+Users must comply with the licensing terms of these components when using CloverAI.
+
+## Citation
+
+If you use CloverAI in your research or projects, please cite it as:
+
+```
+CloverAI: AI Governance Framework
+https://github.com/shankypedia/CloverAI
+```
+
+## Contributing
+
+By contributing to CloverAI, you agree to license your contributions under the same terms as this license.
+
+For questions about licensing or usage, please contact the project maintainers.
