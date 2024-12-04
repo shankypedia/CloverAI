@@ -9,7 +9,7 @@ def count_lines_characters_and_words_in_file(file_path):
 
 def count_stats_in_directory(directory, file_extensions=None):
     if file_extensions is None:
-        file_extensions = ['.py', '.txt', '.Dockerfile', '.md', '.yaml', '.yml', '.csv', 'Dockerfile', '.sh']  # Add Dockerfile and sh extensions
+        file_extensions = ['.py', '.txt', '.Dockerfile', '.md', '.yaml', '.yml', '.csv', 'Dockerfile', '.sh']
 
     total_lines = 0
     total_characters = 0
