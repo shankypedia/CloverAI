@@ -252,27 +252,42 @@ class DomainAwareBiasDetector:
             raise
 
     def _calculate_general_metrics(self,
-                                 dataset: BinaryLabelDataset,
-                                 protected_attribute: str) -> Dict:
-        """Calculate general fairness metrics."""
+                                dataset: BinaryLabelDataset,
+                                protected_attribute: str) -> Dict:
+        """Calculate general fairness metrics with robust error handling."""
         try:
-            metric = BinaryLabelDatasetMetric(
-                dataset,
-                unprivileged_groups=[{protected_attribute: 0}],
-                privileged_groups=[{protected_attribute: 1}]
-            )
+            # Extract privileged and unprivileged data
+            privileged_mask = dataset.protected_attributes[:, 0] == 1
+            unprivileged_mask = dataset.protected_attributes[:, 0] == 0
             
-            return {
-                'statistical_parity': safe_subtract(
-                    metric.statistical_parity_difference(), 0
-                ),
-                'disparate_impact': safe_divide(
-                    metric.disparate_impact(), 1
-                ),
-                'mean_difference': safe_subtract(
-                    metric.mean_difference(), 0
-                )
-            }
+            privileged_outcomes = dataset.labels[privileged_mask]
+            unprivileged_outcomes = dataset.labels[unprivileged_mask]
+            
+            # Calculate base rates with validation
+            if len(privileged_outcomes) > 0 and len(unprivileged_outcomes) > 0:
+                privileged_rate = np.mean(privileged_outcomes)
+                unprivileged_rate = np.mean(unprivileged_outcomes)
+                
+                # Calculate metrics with proper bounds
+                statistical_parity = privileged_rate - unprivileged_rate
+                disparate_impact = (unprivileged_rate / privileged_rate 
+                                if privileged_rate > 0 else 1.0)
+                mean_difference = privileged_rate - unprivileged_rate
+                
+                return {
+                    'statistical_parity': np.clip(statistical_parity, -1, 1),
+                    'disparate_impact': np.clip(disparate_impact, 0, 2),
+                    'mean_difference': np.clip(mean_difference, -1, 1)
+                }
+                
+            else:
+                self.logger.warning("Insufficient data for metric calculation")
+                return {
+                    'statistical_parity': 0.0,
+                    'disparate_impact': 1.0,
+                    'mean_difference': 0.0
+                }
+                
         except Exception as e:
             self.logger.error(f"Error calculating general metrics: {str(e)}")
             return {
