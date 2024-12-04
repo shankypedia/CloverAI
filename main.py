@@ -456,6 +456,36 @@ class CloverAI:
         self.console.print(layout)
 
 
+def prepare_for_bias_detection(self, target_column: str, custom_protected_attrs: List[str] = None) -> Tuple[pd.DataFrame, List[str]]:
+    """
+    Prepare data for bias detection.
+    
+    Args:
+        target_column: Name of the target/label column
+        custom_protected_attrs: Optional list of custom protected attributes
+        
+    Returns:
+        Tuple of (prepared_data, protected_attributes)
+    """
+    prepared_data = self.data.copy()
+    protected_attrs = custom_protected_attrs or self.protected_attributes
+    
+    # Convert categorical variables to numeric
+    for col in self.analyzer.detected_features['categorical']:
+        if col != target_column and col not in protected_attrs:
+            prepared_data[col] = pd.Categorical(prepared_data[col]).codes
+            
+    # Normalize numerical features
+    for col in self.analyzer.detected_features['numerical']:
+        if col != target_column and col not in protected_attrs:
+            if prepared_data[col].std() > 0:
+                prepared_data[col] = (prepared_data[col] - prepared_data[col].mean()) / prepared_data[col].std()
+            else:
+                prepared_data[col] = 0  # Handle case where std is zero
+                
+    return prepared_data, protected_attrs
+
+
 def safe_divide(a: float, b: float, default: float = 1.0) -> float:
     """Safely perform division with error handling."""
     try:
