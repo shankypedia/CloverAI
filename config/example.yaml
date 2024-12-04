@@ -1,0 +1,75 @@
+# Example configuration for CloverAI
+
+# Bias Detection Configuration
+bias_detection:
+  thresholds:
+    demographic_parity: 0.1
+    equal_opportunity: 0.1
+  protected_attributes:
+    - race
+    - gender
+
+# Privacy Protection Configuration
+privacy_protection:
+  encryption:
+    method: AES-GCM
+  sensitive_fields:
+    - ssn
+    - email
+    - phone
+
+# Governance Policies
+governance_policies:
+  network_policy:
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: cloverai-network-policy
+    spec:
+      podSelector:
+        matchLabels:
+          app: cloverai
+      policyTypes:
+      - Ingress
+      - Egress
+      ingress:
+      - from:
+        - podSelector:
+            matchLabels:
+              app: cloverai
+              role: frontend
+        ports:
+        - protocol: TCP
+          port: 3306
+      egress:
+      - to:
+        - podSelector:
+            matchLabels:
+              app: cloverai
+              role: backend
+        ports:
+        - protocol: TCP
+          port: 8080
+
+# Monitoring Configuration
+monitoring:
+  prometheus:
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+    scrape_configs:
+      - job_name: 'cloverai-model-metrics'
+        static_configs:
+          - targets: ['localhost:8000']
+        metrics_path: '/metrics'
+        scrape_interval: 10s
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              - 'alertmanager:9093'
+    rule_files:
+      - "rules/bias_alerts.yml"
+      - "rules/privacy_alerts.yml"
+      - "rules/governance_alerts.yml"
+      
