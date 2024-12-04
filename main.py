@@ -115,9 +115,9 @@ class CloverAI:
                 # Transparency
                 transparency_task = progress.add_task("[cyan]Generating transparency report...", total=100)
                 model = RandomForestClassifier(random_state=42)
-                X = mitigated_data.drop(columns=['label', 'instance_weights'])
-                y = mitigated_data['label']
-                model.fit(X, y)
+                features_for_model = mitigated_data.drop(columns=['label', 'instance_weights'])
+                labels = mitigated_data['label']
+                model.fit(features_for_model, labels)
                 report = generate_report(mitigated_data, model)
                 self._display_transparency_report(report)
                 progress.update(transparency_task, completed=100)
