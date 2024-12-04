@@ -24,7 +24,7 @@ logging.getLogger('tensorflow').setLevel(logging.ERROR)
 # Import components
 from data_processing import load_and_analyze_data
 from validation import DataValidator
-from bias_detection import bias_detection
+from bias_detection import detect_bias, mitigate_bias
 from privacy_protection import privacy_protection
 from governance_automation import governance_automation
 from real_time_monitoring import monitor_metrics
@@ -79,17 +79,17 @@ class CloverAI:
                 # Bias Detection
                 bias_task = progress.add_task("[cyan]Detecting bias...", total=100)
                 prepared_data, protected_attrs = processor.prepare_for_bias_detection('label')
-                bias_metrics = bias_detection.detect_bias(
-                    prepared_data,
-                    protected_attrs[0],
-                    domain='finance'  # or 'healthcare' based on your data
+                bias_metrics = detect_bias(
+                    prepared_data, 
+                    protected_attrs[0], 
+                    domain='finance'
                 )
                 self._display_bias_metrics(bias_metrics)
                 progress.update(bias_task, completed=100)
 
                 # Bias Mitigation
                 mitigation_task = progress.add_task("[cyan]Mitigating bias...", total=100)
-                mitigated_data = bias_detection.mitigate_bias(prepared_data, protected_attrs[0])
+                mitigated_data = mitigate_bias(prepared_data, protected_attrs[0])
                 self._display_mitigated_data(mitigated_data, bias_metrics)
                 progress.update(mitigation_task, completed=100)
 
