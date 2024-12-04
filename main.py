@@ -4,12 +4,11 @@ import logging
 from typing import Any, Dict
 import pandas as pd
 from datetime import datetime
-import json
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich import print as rprint
+import json
 
 # Initialize Rich console
 console = Console()
@@ -21,6 +20,7 @@ warnings.filterwarnings("ignore", category=FutureWarning, module='inFairness')
 logging.getLogger('tensorflow').setLevel(logging.ERROR)
 
 # Import components
+from data_processing import load_and_analyze_data
 from bias_detection import bias_detection
 from privacy_protection import privacy_protection
 from governance_automation import governance_automation
@@ -45,27 +45,29 @@ class CloverAI:
         self.console.print(header)
         self.console.print(f"Started at: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}\n")
 
-    def process_data(self, data_path: str):
-        """Process data through the governance pipeline."""
+    def run_pipeline(self, data_path: str):
+        """Run the complete governance pipeline."""
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console
         ) as progress:
-            # Load Data
-            task = progress.add_task("[cyan]Loading data...", total=None)
-            data = bias_detection.load_data(data_path)
+            # Data Analysis
+            task = progress.add_task("[cyan]Analyzing data...", total=None)
+            processor, analysis_report = load_and_analyze_data(data_path)
+            self._display_analysis_report(analysis_report)
             progress.update(task, completed=True)
             
             # Bias Detection
             task = progress.add_task("[cyan]Running bias detection...", total=None)
-            bias_metrics = bias_detection.detect_bias(data, 'protected_attribute')
+            prepared_data, protected_attrs = processor.prepare_for_bias_detection('label')
+            bias_metrics = bias_detection.detect_bias(prepared_data, protected_attrs[0])
             self._display_bias_metrics(bias_metrics)
             progress.update(task, completed=True)
             
             # Bias Mitigation
             task = progress.add_task("[cyan]Mitigating bias...", total=None)
-            mitigated_data = bias_detection.mitigate_bias(data, 'protected_attribute')
+            mitigated_data = bias_detection.mitigate_bias(prepared_data, protected_attrs[0])
             self._display_mitigated_data(mitigated_data)
             progress.update(task, completed=True)
             
@@ -98,6 +100,17 @@ class CloverAI:
             self._display_transparency_report(report)
             progress.update(task, completed=True)
 
+    def _display_analysis_report(self, report: Dict[str, Any]):
+        """Display data analysis results."""
+        self.console.print(Panel(
+            "\n".join([
+                f"[cyan]Total Records:[/cyan] {report['total_records']}",
+                f"[cyan]Protected Attributes:[/cyan] {', '.join(report['protected_attributes'])}",
+                f"[cyan]Sensitive Fields:[/cyan] {', '.join(report['sensitive_fields'])}"
+            ]),
+            title="Data Analysis"
+        ))
+
     def _display_bias_metrics(self, metrics: Dict[str, Any]):
         """Display bias detection metrics."""
         table = Table(title="Bias Detection Results")
@@ -114,7 +127,7 @@ class CloverAI:
         self.console.print(table)
 
     def _display_mitigated_data(self, data: pd.DataFrame):
-        """Display mitigated data summary."""
+        """Display bias mitigation results."""
         self.console.print(Panel(
             f"[green]Bias Mitigation Complete[/green]\n"
             f"Processed {len(data)} records\n"
@@ -170,10 +183,15 @@ class CloverAI:
         ))
 
 def main():
-    framework = CloverAI()
-    framework.print_header()
-    framework.process_data('data/data.csv')
-    framework.print_completion()
+    try:
+        framework = CloverAI()
+        framework.print_header()
+        framework.run_pipeline('data/data.csv')
+        framework.print_completion()
+    except Exception as e:
+        console.print(f"[red]Error: {str(e)}[/red]")
+        logging.error(f"Error in main execution: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     main()
