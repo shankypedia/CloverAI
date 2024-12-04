@@ -5,6 +5,17 @@ import logging
 
 
 def delete_pycache_directories(directory, recursive, dry_run):
+    """
+    Deletes __pycache__ directories.
+
+    Args:
+        directory (str): Directory to start searching from.
+        recursive (bool): Recursively delete __pycache__ directories.
+        dry_run (bool): Show what would be deleted without actually deleting.
+
+    Returns:
+        bool: True if any __pycache__ directories were found, False otherwise.
+    """
     found_pycache = False
     for root, dirs, files in os.walk(directory):
         for dir_name in dirs:
@@ -25,6 +36,26 @@ def delete_pycache_directories(directory, recursive, dry_run):
 
 
 def main():
+    """
+    Main function to parse arguments and delete __pycache__ directories.
+
+    Example usage:
+    1. Dry Run (Non-Recursive):
+       python delete_pycache.py -d -v
+       Description: This command will show what __pycache__ directories would be deleted without actually deleting them, with verbose output.
+
+    2. Dry Run (Recursive):
+       python delete_pycache.py -d -r -v
+       Description: This command will show what __pycache__ directories would be deleted recursively without actually deleting them, with verbose output.
+
+    3. Actual Deletion (Non-Recursive):
+       python delete_pycache.py -v
+       Description: This command will delete __pycache__ directories in the current directory without recursion, with verbose output.
+
+    4. Actual Deletion (Recursive):
+       python delete_pycache.py -r -v
+       Description: This command will delete __pycache__ directories recursively starting from the current directory, with verbose output.
+    """
     parser = argparse.ArgumentParser(description="Delete __pycache__ directories.")
     parser.add_argument(
         "directory", nargs="?", default=".",
@@ -60,20 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Example usage:
-# 1. Dry Run (Non-Recursive):
-#    python delete_pycache.py -d -v
-#    Description: This command will show what __pycache__ directories would be deleted without actually deleting them, with verbose output.
-
-# 2. Dry Run (Recursive):
-#    python delete_pycache.py -d -r -v
-#    Description: This command will show what __pycache__ directories would be deleted recursively without actually deleting them, with verbose output.
-
-# 3. Actual Deletion (Non-Recursive):
-#    python delete_pycache.py -v
-#    Description: This command will delete __pycache__ directories in the current directory without recursion, with verbose output.
-
-# 4. Actual Deletion (Recursive):
-#    python delete_pycache.py -r -v
-#    Description: This command will delete __pycache__ directories recursively starting from the current directory, with verbose output.
