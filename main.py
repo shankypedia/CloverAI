@@ -1,7 +1,7 @@
 import os
 import warnings
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List, Tuple
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -454,6 +454,16 @@ class CloverAI:
         layout["recommendations"].update(recommendations)
 
         self.console.print(layout)
+
+
+def safe_divide(a: float, b: float, default: float = 1.0) -> float:
+    """Safely perform division with error handling."""
+    try:
+        if abs(b) < 1e-10:
+            return default
+        return a / b
+    except:
+        return default
 
 
 def main():
