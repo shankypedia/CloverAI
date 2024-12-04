@@ -39,6 +39,7 @@ class CloverAI:
         self.console = Console()
         self.start_time = datetime.now()
         self.validator = DataValidator()
+        self.logger = logging.getLogger(__name__)
 
     def print_header(self):
         """Print framework header."""
@@ -116,20 +117,26 @@ class CloverAI:
                 transparency_task = progress.add_task("[cyan]Generating transparency report...", total=100)
 
                 try:
-                    feature_columns = [col for col in mitigated_data.columns 
+                    # Prepare data for model training - preserve label column for the report
+                    model_data = mitigated_data.copy()
+                    feature_columns = [col for col in model_data.columns 
                                     if col not in ['label', 'instance_weights']]
                     
                     model = RandomForestClassifier(random_state=42)
-                    X_train = mitigated_data[feature_columns]
-                    y_train = mitigated_data['label']
+                    X_train = model_data[feature_columns]
+                    y_train = model_data['label']
+                    
+                    # Train the model
                     model.fit(X_train, y_train)
-                    report = generate_report(mitigated_data[feature_columns], model)
+                    
+                    # Generate report with the complete dataset
+                    report = generate_report(model_data, model)
                     self._display_transparency_report(report)
                     
                 except Exception as e:
                     self.logger.error(f"Error in transparency report generation: {str(e)}")
                     raise
-                
+
                 progress.update(transparency_task, completed=100)
 
         except Exception as e:
