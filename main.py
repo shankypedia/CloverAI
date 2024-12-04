@@ -119,8 +119,8 @@ class CloverAI:
                 try:
                     # Prepare data for model training - preserve label column for the report
                     model_data = mitigated_data.copy()
-                    feature_columns = [col for col in model_data.columns 
-                                    if col not in ['label', 'instance_weights']]
+                    # Exclude 'instance_weights' from features
+                    feature_columns = [col for col in model_data.columns if col not in ['label', 'instance_weights']]
                     
                     model = RandomForestClassifier(random_state=42)
                     X_train = model_data[feature_columns]
@@ -130,7 +130,7 @@ class CloverAI:
                     model.fit(X_train, y_train)
                     
                     # Generate report with the complete dataset
-                    report = generate_report(model_data, model)
+                    report = generate_report(model_data[feature_columns + ['label']], model)
                     self._display_transparency_report(report)
                     
                 except Exception as e:
