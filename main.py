@@ -225,7 +225,7 @@ class CloverAI:
     def _display_mitigated_data(self, data: pd.DataFrame, original_metrics: Dict[str, Any]):
         """Display bias mitigation results."""
         # Calculate post-mitigation metrics
-        post_metrics = bias_detection.detect_bias(data, 'protected_attribute')
+        post_metrics = detect_bias(data, 'protected_attribute')
 
         table = Table(title="Bias Mitigation Results")
         table.add_column("Metric", style="cyan")
