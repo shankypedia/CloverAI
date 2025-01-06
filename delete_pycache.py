@@ -46,4 +46,3 @@ if __name__ == "__main__":
         console.print(Panel("[bold yellow]Skipped Directories[/bold yellow]", title="Skipped Directories"))
         for dir_path, error in skipped_dirs:
             console.print(f"Skipping directory: {dir_path} due to error: {error}")
-            
